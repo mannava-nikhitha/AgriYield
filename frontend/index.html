@@ -1,0 +1,203 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Crop Yield Prediction</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #e0f7e9, #e0f2fe);
+      color: #173b2b;
+      min-height: 100vh;
+      padding: 30px 15px;
+    }
+
+    .container {
+      max-width: 760px;
+      margin: auto;
+      background: white;
+      padding: 30px;
+      border-radius: 18px;
+      box-shadow: 0 8px 28px #00000018;
+    }
+
+    h1 { text-align: center; color: #187344; }
+    .subtitle { text-align: center; color: #587064; }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-top: 28px;
+    }
+
+    label { display: block; font-weight: bold; margin-bottom: 7px; }
+
+    input, select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #cbd5d0;
+      border-radius: 8px;
+      font-size: 15px;
+      background: white;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      margin-top: 24px;
+      border: none;
+      border-radius: 9px;
+      background: #16834a;
+      color: white;
+      font-size: 17px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover { background: #106638; }
+    button:disabled { opacity: 0.6; cursor: wait; }
+
+    #result {
+      margin-top: 22px;
+      padding: 16px;
+      border-radius: 10px;
+      background: #edf9f0;
+      display: none;
+      overflow-wrap: anywhere;
+    }
+
+    #result.error { background: #fff0f0; color: #a32323; }
+
+    @media (max-width: 550px) {
+      .form-grid { grid-template-columns: 1fr; }
+      .container { padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <h1>🌾 Crop Yield Prediction</h1>
+    <p class="subtitle">Enter crop and farming details to estimate yield.</p>
+
+    <form id="predictionForm">
+      <div class="form-grid">
+        <div>
+          <label for="crop">Crop</label>
+          <input id="crop" value="Maize" required>
+        </div>
+
+        <div>
+          <label for="state">State</label>
+          <input id="state" value="Andhra Pradesh" required>
+        </div>
+
+        <div>
+          <label for="year">Year</label>
+          <input id="year" type="number" min="1997" max="2020"
+                 value="2018" required>
+        </div>
+
+        <div>
+          <label for="season">Season</label>
+          <select id="season" required>
+            <option>Kharif</option>
+            <option>Rabi</option>
+            <option>Whole Year</option>
+            <option>Summer</option>
+            <option>Winter</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="area">Area</label>
+          <input id="area" type="number" min="0.000001"
+                 step="any" value="100" required>
+        </div>
+
+        <div>
+          <label for="fertilizer">Fertilizer</label>
+          <input id="fertilizer" type="number" min="0"
+                 step="any" value="10000" required>
+        </div>
+
+        <div>
+          <label for="pesticide">Pesticide</label>
+          <input id="pesticide" type="number" min="0"
+                 step="any" value="50" required>
+        </div>
+      </div>
+
+      <button id="predictButton" type="submit">
+        Predict Yield
+      </button>
+    </form>
+
+    <div id="result" role="status" aria-live="polite"></div>
+  </main>
+
+  <script>
+    const form = document.getElementById("predictionForm");
+    const result = document.getElementById("result");
+    const button = document.getElementById("predictButton");
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      const payload = {
+        crop: document.getElementById("crop").value.trim(),
+        state: document.getElementById("state").value.trim(),
+        year: Number(document.getElementById("year").value),
+        season: document.getElementById("season").value,
+        area: Number(document.getElementById("area").value),
+        fertilizer: Number(document.getElementById("fertilizer").value),
+        pesticide: Number(document.getElementById("pesticide").value)
+      };
+
+      result.style.display = "block";
+      result.className = "";
+      result.textContent = "Generating prediction...";
+      button.disabled = true;
+
+      try {
+        const response = await fetch("http://127.0.0.1:8000/predict", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(JSON.stringify(data.detail || data));
+        }
+
+        result.innerHTML = "";
+        const heading = document.createElement("h3");
+        heading.textContent = "Prediction Result";
+        const details = document.createElement("p");
+        details.textContent =
+          `Crop: ${data.crop} | State: ${data.state} | Year: ${data.year}`;
+        const value = document.createElement("p");
+        value.textContent = `Predicted yield: ${data.predicted_yield}`;
+        const note = document.createElement("p");
+        note.textContent = data.note || "Model estimate; accuracy is not guaranteed.";
+
+        result.append(heading, details, value, note);
+      } catch (error) {
+        result.className = "error";
+        result.textContent =
+          "Prediction failed: " + error.message +
+          ". Check that the backend is running.";
+      } finally {
+        button.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>

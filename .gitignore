@@ -1,0 +1,11 @@
+@"
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ipynb_checkpoints/
+.env
+outputs/
+models/improved_multimodal_model.keras
+models/multimodal_preprocessors.joblib
+"@ | Set-Content .gitignore
