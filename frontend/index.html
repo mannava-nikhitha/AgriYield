@@ -1,203 +1,122 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Crop Yield Prediction</title>
-  <style>
-    * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #e0f7e9, #e0f2fe);
-      color: #173b2b;
-      min-height: 100vh;
-      padding: 30px 15px;
-    }
-
-    .container {
-      max-width: 760px;
-      margin: auto;
-      background: white;
-      padding: 30px;
-      border-radius: 18px;
-      box-shadow: 0 8px 28px #00000018;
-    }
-
-    h1 { text-align: center; color: #187344; }
-    .subtitle { text-align: center; color: #587064; }
-
-    .form-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 18px;
-      margin-top: 28px;
-    }
-
-    label { display: block; font-weight: bold; margin-bottom: 7px; }
-
-    input, select {
-      width: 100%;
-      padding: 12px;
-      border: 1px solid #cbd5d0;
-      border-radius: 8px;
-      font-size: 15px;
-      background: white;
-    }
-
-    button {
-      width: 100%;
-      padding: 14px;
-      margin-top: 24px;
-      border: none;
-      border-radius: 9px;
-      background: #16834a;
-      color: white;
-      font-size: 17px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    button:hover { background: #106638; }
-    button:disabled { opacity: 0.6; cursor: wait; }
-
-    #result {
-      margin-top: 22px;
-      padding: 16px;
-      border-radius: 10px;
-      background: #edf9f0;
-      display: none;
-      overflow-wrap: anywhere;
-    }
-
-    #result.error { background: #fff0f0; color: #a32323; }
-
-    @media (max-width: 550px) {
-      .form-grid { grid-template-columns: 1fr; }
-      .container { padding: 20px; }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#123b2c">
+<title>AgriYield | Crop Intelligence Dashboard</title>
+<style>
+:root{--forest:#103c2c;--forest2:#18583d;--green:#2e8b57;--mint:#e8f3e9;--lime:#b8d995;--ink:#1c3026;--muted:#758279;--line:#e6ece6;--paper:#fff;--bg:#f5f7f3;--gold:#e5b849;--shadow:0 5px 22px rgba(25,55,38,.055)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+.app{min-height:100vh}.sidebar{position:fixed;inset:0 auto 0 0;width:248px;background:linear-gradient(180deg,#103c2c,#0d3325);color:#fff;padding:23px 15px;display:flex;flex-direction:column;z-index:5}
+.brand{display:flex;align-items:center;gap:11px;padding:3px 8px 27px}.brand-icon{width:42px;height:42px;border-radius:14px;background:#ffffff19;display:grid;place-items:center;font-size:24px}.brand-name{font-size:18px;font-weight:800;letter-spacing:-.5px}.brand-sub{font-size:9px;letter-spacing:1.15px;color:#b9d1c0;margin-top:3px;text-transform:uppercase}
+.nav-label{font-size:9px;color:#83a994;letter-spacing:1.5px;font-weight:800;padding:8px 12px 9px}.nav{display:grid;gap:5px}.nav a{color:#d4e3d8;text-decoration:none;display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:10px;font-size:13px;transition:.18s}.nav a .ico{width:20px;text-align:center;font-size:16px}.nav a:hover,.nav a.active{background:#ffffff20;color:#fff}.nav a.active{box-shadow:inset 3px 0 #b8d995}
+.sidebar-bottom{margin-top:auto;border:1px solid #ffffff24;border-radius:14px;padding:15px 13px;background:#ffffff0d}.sidebar-bottom .sprout{font-size:22px}.sidebar-bottom strong{display:block;font-size:12px;margin:8px 0 5px}.sidebar-bottom p{margin:0;color:#b9d1c0;font-size:11px;line-height:1.55}
+.main{margin-left:248px;min-height:100vh}.topbar{height:76px;padding:0 34px;background:#ffffffd9;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:20px;position:sticky;top:0;z-index:4;backdrop-filter:blur(12px)}.welcome strong{font-size:17px;color:#1c3428}.welcome p{margin:4px 0 0;color:var(--muted);font-size:11px}.top-right{display:flex;align-items:center;gap:17px;color:#66756b;font-size:11px}.model-pill{display:flex;align-items:center;gap:7px;border:1px solid #dce8dc;background:#f8fbf7;border-radius:99px;padding:8px 11px;color:#356849;font-weight:700}.live-dot{width:7px;height:7px;border-radius:50%;background:#4caa67}
+.content{max-width:1500px;margin:auto;padding:27px 32px 38px}.page-title{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;margin-bottom:20px}.eyebrow{font-size:10px;letter-spacing:1.6px;text-transform:uppercase;color:#6c9275;font-weight:800}.page-title h1{margin:6px 0 4px;font-size:25px;letter-spacing:-.8px;color:#173c2b}.page-title p{margin:0;color:var(--muted);font-size:12px}.date-chip{padding:9px 12px;border:1px solid var(--line);background:#fff;border-radius:10px;font-size:11px;color:#637268;white-space:nowrap}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:18px}.stat{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px 17px;box-shadow:var(--shadow);min-height:103px}.stat-top{display:flex;justify-content:space-between;align-items:center;color:#6f7c73;font-size:11px}.stat-icon{width:30px;height:30px;display:grid;place-items:center;border-radius:10px;background:#edf6eb;font-size:16px}.stat strong{display:block;margin-top:9px;font-size:21px;color:#203b2c;letter-spacing:-.6px}.stat small{display:block;margin-top:3px;color:#849188;font-size:10px}
+.grid{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(260px,.85fr);gap:17px;align-items:start}.card{background:#fff;border:1px solid var(--line);border-radius:15px;box-shadow:var(--shadow)}.card-head{padding:18px 20px 0;display:flex;justify-content:space-between;align-items:flex-start;gap:12px}.card-head h2{font-size:14px;margin:0;color:#203b2c}.card-head p{font-size:11px;color:#89958c;margin:5px 0 0}.card-body{padding:17px 20px 20px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px 14px}.field label{display:block;margin-bottom:7px;font-size:11px;font-weight:750;color:#42554a}.field input,.field select{width:100%;height:43px;border:1px solid #dfe8df;border-radius:9px;padding:0 12px;background:#fbfdfb;color:#24392d;font:inherit;font-size:12px;outline:none;transition:.18s}.field input:focus,.field select:focus{border-color:#62a77a;box-shadow:0 0 0 3px #4b9a671a;background:white}.hint{font-size:9px;color:#98a39a;margin-top:5px}
+.submit{margin-top:19px;width:100%;height:47px;border:0;border-radius:9px;background:linear-gradient(100deg,#238653,#17623e);color:white;font:inherit;font-size:12px;font-weight:800;cursor:pointer;box-shadow:0 7px 15px #23865327;transition:.18s}.submit:hover{filter:brightness(1.06);transform:translateY(-1px)}.submit:disabled{opacity:.65;cursor:wait;transform:none}
+#result{display:none;margin-top:15px;padding:17px;border-radius:12px;border:1px solid #dcebdc;background:linear-gradient(135deg,#f2faef,#fbfdf9);overflow-wrap:anywhere}#result.error{border-color:#f0d2d0;background:#fff5f4;color:#9e3030}.result-kicker{font-size:9px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:#6d8a70}.result-value{font-size:27px;font-weight:850;letter-spacing:-.8px;color:#17452e;margin:5px 0}.result-meta{font-size:10px;color:#718078}.result-note{border-top:1px solid #e0ebdf;padding-top:9px;margin-top:10px;font-size:10px;color:#718078;line-height:1.5}
+.side-stack{display:grid;gap:15px}.model-card{padding:18px 19px}.model-top{display:flex;align-items:center;gap:11px}.model-badge{width:38px;height:38px;border-radius:11px;background:#edf6eb;display:grid;place-items:center;font-size:19px}.model-top strong{font-size:12px;color:#244332;display:block}.model-top span{font-size:10px;color:#8a978e;display:block;margin-top:3px}.model-details{margin-top:16px;display:grid;gap:11px}.detail{display:flex;justify-content:space-between;gap:10px;font-size:10px;border-bottom:1px solid #f0f3ef;padding-bottom:9px}.detail:last-child{border:0;padding:0}.detail span{color:#849087}.detail b{color:#3d5948;font-weight:700;text-align:right}
+.workflow{padding:18px 19px}.workflow h3{margin:0 0 14px;font-size:13px;color:#244332}.flow-item{display:flex;gap:10px;margin:12px 0}.flow-num{width:23px;height:23px;flex:0 0 23px;border-radius:50%;background:#edf6eb;color:#3d8051;display:grid;place-items:center;font-size:10px;font-weight:800}.flow-item strong{font-size:10px;display:block;color:#405449;margin:1px 0 3px}.flow-item span{font-size:9px;line-height:1.45;color:#89958c;display:block}
+.bottom-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:17px;margin-top:17px}.info-panel{padding:18px 20px}.info-panel h3{margin:0 0 8px;font-size:13px;color:#244332}.info-panel p{margin:0;color:#7c8980;font-size:10px;line-height:1.7}.input-tags{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}.input-tags span{padding:6px 9px;border-radius:99px;background:#f0f6ed;color:#50735a;font-size:9px;font-weight:650}
+.footer{text-align:center;color:#9aa49c;font-size:9px;padding:22px 0 4px}
+@media(max-width:1050px){.sidebar{width:215px}.main{margin-left:215px}.content{padding:23px 22px}.stats{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}.side-stack{grid-template-columns:1fr 1fr}}
+@media(max-width:700px){.sidebar{position:static;width:auto;height:auto;padding:12px 14px}.brand{padding:0 5px 12px}.nav-label,.sidebar-bottom{display:none}.nav{display:flex;overflow-x:auto}.nav a{white-space:nowrap;padding:9px 10px}.nav a .ico{display:none}.main{margin:0}.topbar{height:62px;padding:0 17px}.top-right .model-pill{display:none}.content{padding:20px 14px}.page-title h1{font-size:21px}.date-chip{display:none}.stats{gap:9px}.stat{padding:13px;min-height:92px}.stat strong{font-size:18px}.side-stack,.bottom-grid{grid-template-columns:1fr}.form-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:430px){.form-grid{grid-template-columns:1fr}.welcome strong{font-size:14px}.welcome p{font-size:10px}.stats{grid-template-columns:1fr 1fr}}
+</style>
 </head>
 <body>
-  <main class="container">
-    <h1>🌾 Crop Yield Prediction</h1>
-    <p class="subtitle">Enter crop and farming details to estimate yield.</p>
-
-    <form id="predictionForm">
-      <div class="form-grid">
-        <div>
-          <label for="crop">Crop</label>
-          <input id="crop" value="Maize" required>
+<div class="app">
+<aside class="sidebar">
+  <div class="brand"><div class="brand-icon">🌾</div><div><div class="brand-name">AgriYield</div><div class="brand-sub">Crop intelligence</div></div></div>
+  <div class="nav-label">WORKSPACE</div>
+  <nav class="nav">
+    <a class="active" href="#dashboard"><span class="ico">▦</span>Dashboard</a>
+    <a href="#predict"><span class="ico">🌱</span>Predict Yield</a>
+    <a href="#model"><span class="ico">◈</span>Model Overview</a>
+    <a href="#about"><span class="ico">ⓘ</span>About Project</a>
+  </nav>
+  <div class="sidebar-bottom"><div class="sprout">🌿</div><strong>Smarter decisions start with better insights.</strong><p>Use data-driven estimates to support agricultural planning.</p></div>
+</aside>
+<main class="main" id="dashboard">
+  <header class="topbar">
+    <div class="welcome"><strong>Welcome to AgriYield 🌿</strong><p>Your crop yield prediction workspace</p></div>
+    <div class="top-right"><div class="model-pill"><span class="live-dot"></span> Residual MLP workspace</div><span>🌤️ &nbsp; Agriculture analytics</span></div>
+  </header>
+  <div class="content">
+    <div class="page-title"><div><div class="eyebrow">CROP INTELLIGENCE DASHBOARD</div><h1>Crop Yield Overview</h1><p>Enter farm information and generate predictions using the Residual MLP model.</p></div><div class="date-chip">🌾 &nbsp; Prediction workspace</div></div>
+    <section class="stats">
+      <div class="stat"><div class="stat-top"><span>Prediction inputs</span><span class="stat-icon">🧾</span></div><strong>07</strong><small>Farm and cultivation details</small></div>
+      <div class="stat"><div class="stat-top"><span>Model architecture</span><span class="stat-icon">🧠</span></div><strong>Residual MLP</strong><small>Residual Multi-Layer Perceptron</small></div>
+      <div class="stat"><div class="stat-top"><span>Dataset coverage</span><span class="stat-icon">🗓️</span></div><strong>1997–2020</strong><small>Year range available in this interface</small></div>
+      <div class="stat"><div class="stat-top"><span>Prediction mode</span><span class="stat-icon">⚡</span></div><strong>On demand</strong><small>Submit details to estimate yield</small></div>
+    </section>
+    <div class="grid">
+      <section class="card" id="predict">
+        <div class="card-head"><div><h2>Farm &amp; Crop Details</h2><p>Complete the fields to estimate expected crop yield.</p></div></div>
+        <div class="card-body">
+          <form id="predictionForm">
+            <div class="form-grid">
+              <div class="field"><label for="crop">Crop</label><input id="crop" value="Maize" placeholder="e.g. Maize" required></div>
+              <div class="field"><label for="state">State</label><input id="state" value="Andhra Pradesh" placeholder="Enter state" required></div>
+              <div class="field"><label for="year">Cultivation year</label><input id="year" type="number" min="1997" max="2020" value="2018" required><div class="hint">Available years: 1997–2020</div></div>
+              <div class="field"><label for="season">Season</label><select id="season" required><option>Kharif</option><option>Rabi</option><option>Whole Year</option><option>Summer</option><option>Winter</option></select></div>
+              <div class="field"><label for="area">Cultivated area</label><input id="area" type="number" min="0.000001" step="any" value="100" required></div>
+              <div class="field"><label for="fertilizer">Fertilizer used</label><input id="fertilizer" type="number" min="0" step="any" value="10000" required></div>
+              <div class="field"><label for="pesticide">Pesticide used</label><input id="pesticide" type="number" min="0" step="any" value="50" required></div>
+            </div>
+            <button class="submit" id="predictButton" type="submit">Generate Yield Prediction &nbsp; →</button>
+          </form>
+          <div id="result" role="status" aria-live="polite"></div>
         </div>
-
-        <div>
-          <label for="state">State</label>
-          <input id="state" value="Andhra Pradesh" required>
-        </div>
-
-        <div>
-          <label for="year">Year</label>
-          <input id="year" type="number" min="1997" max="2020"
-                 value="2018" required>
-        </div>
-
-        <div>
-          <label for="season">Season</label>
-          <select id="season" required>
-            <option>Kharif</option>
-            <option>Rabi</option>
-            <option>Whole Year</option>
-            <option>Summer</option>
-            <option>Winter</option>
-          </select>
-        </div>
-
-        <div>
-          <label for="area">Area</label>
-          <input id="area" type="number" min="0.000001"
-                 step="any" value="100" required>
-        </div>
-
-        <div>
-          <label for="fertilizer">Fertilizer</label>
-          <input id="fertilizer" type="number" min="0"
-                 step="any" value="10000" required>
-        </div>
-
-        <div>
-          <label for="pesticide">Pesticide</label>
-          <input id="pesticide" type="number" min="0"
-                 step="any" value="50" required>
-        </div>
-      </div>
-
-      <button id="predictButton" type="submit">
-        Predict Yield
-      </button>
-    </form>
-
-    <div id="result" role="status" aria-live="polite"></div>
-  </main>
-
-  <script>
-    const form = document.getElementById("predictionForm");
-    const result = document.getElementById("result");
-    const button = document.getElementById("predictButton");
-
-    form.addEventListener("submit", async (event) => {
-      event.preventDefault();
-
-      const payload = {
-        crop: document.getElementById("crop").value.trim(),
-        state: document.getElementById("state").value.trim(),
-        year: Number(document.getElementById("year").value),
-        season: document.getElementById("season").value,
-        area: Number(document.getElementById("area").value),
-        fertilizer: Number(document.getElementById("fertilizer").value),
-        pesticide: Number(document.getElementById("pesticide").value)
-      };
-
-      result.style.display = "block";
-      result.className = "";
-      result.textContent = "Generating prediction...";
-      button.disabled = true;
-
-      try {
-        const response = await fetch("https://agriyield-t25o.onrender.com/predict", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
-        });
-
-        const data = await response.json();
-
-        if (!response.ok) {
-          throw new Error(JSON.stringify(data.detail || data));
-        }
-
-        result.innerHTML = "";
-        const heading = document.createElement("h3");
-        heading.textContent = "Prediction Result";
-        const details = document.createElement("p");
-        details.textContent =
-          `Crop: ${data.crop} | State: ${data.state} | Year: ${data.year}`;
-        const value = document.createElement("p");
-        value.textContent = `Predicted yield: ${data.predicted_yield}`;
-        const note = document.createElement("p");
-        note.textContent = data.note || "Model estimate; accuracy is not guaranteed.";
-
-        result.append(heading, details, value, note);
-      } catch (error) {
-        result.className = "error";
-        result.textContent =
-          "Prediction failed: " + error.message +
-          ". Check that the backend is running.";
-      } finally {
-        button.disabled = false;
-      }
-    });
-  </script>
+      </section>
+      <aside class="side-stack">
+        <section class="card model-card" id="model">
+          <div class="model-top"><div class="model-badge">🧠</div><div><strong>Residual MLP Model</strong><span>Selected prediction architecture</span></div></div>
+          <div class="model-details">
+            <div class="detail"><span>Architecture</span><b>Residual Multi-Layer Perceptron</b></div>
+            <div class="detail"><span>Task</span><b>Crop yield regression</b></div>
+            <div class="detail"><span>Input type</span><b>Structured farm data</b></div>
+            <div class="detail"><span>Inference</span><b>Python API</b></div>
+          </div>
+        </section>
+        <section class="card workflow">
+          <h3>How prediction works</h3>
+          <div class="flow-item"><div class="flow-num">1</div><div><strong>Enter cultivation details</strong><span>Provide crop, state, year, season and farm inputs.</span></div></div>
+          <div class="flow-item"><div class="flow-num">2</div><div><strong>Send request to backend</strong><span>The HTML page sends your values to the Python prediction API.</span></div></div>
+          <div class="flow-item"><div class="flow-num">3</div><div><strong>View the model estimate</strong><span>The trained Residual MLP model returns the predicted yield.</span></div></div>
+        </section>
+      </aside>
+    </div>
+    <div class="bottom-grid" id="about">
+      <section class="card info-panel"><h3>Inputs used for prediction</h3><p>The frontend collects seven farm inputs. The backend combines these with weather and soil features to prepare the 14-feature input required by the Residual MLP model.</p><div class="input-tags"><span>Crop</span><span>State</span><span>Year</span><span>Season</span><span>Area</span><span>Fertilizer</span><span>Pesticide</span></div></section>
+      <section class="card info-panel"><h3>About this dashboard</h3><p>AgriYield is a crop yield prediction system powered by a Residual MLP model. It uses structured agricultural, weather and soil features to estimate crop yield through a trained machine learning pipeline. Predictions are estimates; actual harvest outcomes may vary.</p></section>
+    </div>
+    <div class="footer">AgriYield · Crop Yield Prediction System · Residual MLP Integration</div>
+  </div>
+</main>
+</div>
+<script>
+const form=document.getElementById("predictionForm"),result=document.getElementById("result"),button=document.getElementById("predictButton");
+form.addEventListener("submit",async event=>{
+ event.preventDefault();
+ const payload={crop:document.getElementById("crop").value.trim(),state:document.getElementById("state").value.trim(),year:Number(document.getElementById("year").value),season:document.getElementById("season").value,area:Number(document.getElementById("area").value),fertilizer:Number(document.getElementById("fertilizer").value),pesticide:Number(document.getElementById("pesticide").value)};
+ result.style.display="block";result.className="";result.textContent="Generating prediction…";button.disabled=true;button.textContent="Generating prediction…";
+ try{
+  const response=await fetch("https://agriyield-t25o.onrender.com/predict",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
+  const data=await response.json();
+  if(!response.ok)throw new Error(typeof data.detail==="string"?data.detail:JSON.stringify(data.detail||data));
+  result.innerHTML="";const label=document.createElement("div");label.className="result-kicker";label.textContent="Prediction completed";
+  const value=document.createElement("div");value.className="result-value";value.textContent=data.predicted_yield;
+  const meta=document.createElement("div");meta.className="result-meta";meta.textContent=`${data.crop} · ${data.state} · ${data.year}`;
+  const note=document.createElement("div");note.className="result-note";note.textContent=data.note||"This is a model-based estimate. Actual yield may vary.";
+  result.append(label,value,meta,note);
+ }catch(error){result.className="error";result.textContent="Prediction failed: "+error.message+". Check that the backend is running and that the API address is correct."}
+ finally{button.disabled=false;button.textContent="Generate Yield Prediction  →"}
+});
+</script>
 </body>
 </html>
